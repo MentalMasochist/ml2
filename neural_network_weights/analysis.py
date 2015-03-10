@@ -41,17 +41,23 @@ def Evaluation():
 		train_acc = np.sum(y_predict == y_act) / float(len(y_predict))
 		return train_acc
 
-	# # Randomized Hill Climbing
-	# # 100 iter : 18.5 sec
+	# Randomized Hill Climbing
+	# 100 iter : 18.5 sec
+	ofilename = "./results/rhc_results.csv"
 	# max_fit, max_vec, d_progress = ropt.continuous_RandomizedHillClimb(len(fnn.params), fitness, iterations=10000, restarts=10, verbose=False)
+	max_fit, max_vec = ropt.continuous_RandomizedHillClimb(len(fnn.params), fitness, iterations=100, restarts=1, verbose=False)
 
 	# # Simulated Annealing
 	# # # 100 iter : 23.1 sec
-	# max_fit, max_vec, d_progress = ropt.continuous_SimulatedAnnealing(len(fnn.params), fitness, iterations=10000, restarts=10, verbose=False)
+	# ofilename = "./results/sa_results.csv"
+	# # max_fit, max_vec = ropt.continuous_SimulatedAnnealing(len(fnn.params), fitness, iterations=10000, restarts=10, verbose=False)
+	# max_fit, max_vec = ropt.continuous_SimulatedAnnealing(len(fnn.params), fitness, iterations=100, restarts=1, verbose=False)
 
-	# Genetic Algorithms
-	# 100 iter : 42 seconds
-	max_fit, max_vec, d_progress = ropt.continuous_GeneticAlgorithm(len(fnn.params), fitness, population_size=100, generations=100, restarts=5, verbose=False)
+	# # Genetic Algorithms
+	# # 100 iter : 42 seconds
+	# ofilename = "./results/ga_results.csv"
+	# # max_fit, max_vec = ropt.continuous_GeneticAlgorithm(len(fnn.params), fitness, population_size=100, generations=100, restarts=5, verbose=False)
+	# max_fit, max_vec = ropt.continuous_GeneticAlgorithm(len(fnn.params), fitness, population_size=100, generations=10, restarts=1, verbose=False)
 
 	# test randomized optimization solution
 	for i,v in enumerate(max_vec):
@@ -65,8 +71,11 @@ def Evaluation():
 	print "test acc = %f" % test_acc
 	print "weights:"
 	print max_vec
-	print "d_progress:"
-	print d_progress
+
+	writer = csv.writer(open(ofilename, 'w'))
+	writer.writerow(['train_acc',max_fit])
+	writer.writerow(['test_acc',test_acc])
+	writer.writerow(['weights',max_vec])
 
 	# print fnn.params[:10]
 	# trainer = BackpropTrainer(fnn, dataset=trndata, batchlearning=True) 

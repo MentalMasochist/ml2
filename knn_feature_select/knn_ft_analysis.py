@@ -55,54 +55,43 @@ def main():
 		scores = cross_val_score(clf, na_trnfeatures[:,vec_select[:-7].astype(bool)], na_trnlabels, cv=5)
 		return scores.mean()
 
-	# # test algorithms
-	# print "\nRHC " + "#"*30
-	# max_fit, max_vec, d_progress = ropt.bitflip_RandomizedHillClimb(na_trnfeatures.shape[1]+7, fit, iterations=100, restarts=1, verbose=True)
-	# print "RHC fitness: ", max_fit
-	# feature_vec = max_vec[:-7] 
-	# print "selection vector: ", feature_vec
-	# max_k = int("".join(max_vec[-7:].astype(str)),2)
-	# print "CV-k: ", max_k
-	# print "d_progress:"
-	# print d_progress
+	# test algorithms
+	# Randomized Hill CLimbing
+	print "\nRHC " + "#"*30
+	ofilename = "./results/rhc_results.csv"
+	max_fit, max_vec = ropt.bitflip_RandomizedHillClimb(na_trnfeatures.shape[1]+7, fit, iterations=100, restarts=1, verbose=True)
 
+	# # Simulated Annealing
 	# print "\nSA " + "#"*30
-	# max_fit, max_vec, d_progress = ropt.bitflip_SimulatedAnnealing(na_trnfeatures.shape[1]+7, fit, iterations=100, restarts=1, verbose=True)
-	# print "SA fitness: ", max_fit
-	# feature_vec = max_vec[:-7] 
-	# print "selection vector: ", feature_vec
-	# max_k = int("".join(max_vec[-7:].astype(str)),2)
-	# print "CV-k: ", max_k
-	# print "d_progress:"
-	# print d_progress
+	# ofilename = "./results/sa_results.csv"
+	# max_fit, max_vec = ropt.bitflip_SimulatedAnnealing(na_trnfeatures.shape[1]+7, fit, iterations=100, restarts=1, verbose=True)
 
+	# # Genetic Algorithms
 	# print "\nGA " + "#"*30
-	# max_fit, max_vec, d_progress = ropt.bitflip_GeneticAlgorithm(na_trnfeatures.shape[1]+7, fit, population_size=100, generations=3, restarts=1, child_per_parent=1, mutation_prob=0.1, crossover_split=0.5, verbose=True)
-	# print "GA fitness: ", max_fit
-	# feature_vec = max_vec[:-7] 
-	# print "selection vector: ", feature_vec
-	# max_k = int("".join(max_vec[-7:].astype(str)),2)
-	# print "CV-k: ", max_k
-	# print "d_progress:"
-	# print d_progress	
+	# ofilename = "./results/ga_results.csv"
+	# max_fit, max_vec = ropt.bitflip_GeneticAlgorithm(na_trnfeatures.shape[1]+7, fit, population_size=100, generations=3, restarts=1, child_per_parent=1, mutation_prob=0.1, crossover_split=0.5, verbose=True)
 
-	print "\nMIMIC " + "#"*30
-	max_fit, max_vec, d_progress = \
-		ropt.bitflip_MIMIC(na_trnfeatures.shape[1]+7, fit, iterations=10, restarts=1, init_population_size=100, n_samples=100, theta_percentile=0.8, verbose=True)
-	print "MIMIC fitness: ", max_fit
-	feature_vec = max_vec[:-7] 
-	print "selection vector: ", feature_vec
-	max_k = int("".join(max_vec[-7:].astype(str)),2)
-	print "CV-k: ", max_k
-	print "d_progress:"
-	print d_progress
+	# # MIMIC
+	# print "\nMIMIC " + "#"*30
+	# ofilename = "./results/mimic_results.csv"
+	# max_fit, max_vec = \
+	# 	ropt.bitflip_MIMIC(na_trnfeatures.shape[1]+7, fit, iterations=10, restarts=1, init_population_size=100, n_samples=100, theta_percentile=0.8, verbose=True)
 
 	# get results on test data
+	feature_vec = max_vec[:-7]
+	max_k = int("".join(max_vec[-7:].astype(str)),2)
 	clf = KNeighborsClassifier(n_neighbors=max_k)
 	clf.fit(na_trnfeatures[:,feature_vec.astype(bool)], na_trnlabels)
 	y_predict = clf.predict(na_tstfeatures[:,feature_vec.astype(bool)])
 	test_acc = np.sum(y_predict == na_tstlabels) / float(len(na_tstlabels))
 	print "test_acc = %f" % test_acc
+
+	# write results
+	writer = csv.writer(open(ofilename,'w'))
+	writer.writerow(['train_acc',max_fit])
+	writer.writerow(['feature_vector',feature_vec])
+	writer.writerow(['k_neighbors',max_k])
+	writer.writerow(['test_acc',test_acc])
 
 	return
 

@@ -5,6 +5,7 @@
 import numpy as np
 import datetime as dt
 import copy
+import csv
 from random import random
 
 np.random.seed(None)
@@ -18,15 +19,16 @@ def get_param_neighbor(param):
 	return new_param
 
 
-def continuous_RandomizedHillClimb(param_size, fit_func, iterations, restarts, verbose=False):
+def continuous_RandomizedHillClimb(param_size, fit_func, iterations, restarts, verbose=False, ofilename='./results/rhc_progress.csv'):
 	""" Randomized Hill Climbing w. random restart
 	"""
 	# initialize max values
 	max_fit = None
 	max_vec = None
 	iter_ct = 0
-	d_progress = {}
 	record_ct = 100
+	writer = csv.writer(open(ofilename,'w'))
+	writer.writerow(['iterations','fitness'])
 	for r in xrange(restarts):
 		if verbose:
 			print "RANDOM START"
@@ -53,11 +55,11 @@ def continuous_RandomizedHillClimb(param_size, fit_func, iterations, restarts, v
 					print "max fit: %10.6f" % max_fit
 			iter_ct += 1
 			if (iter_ct % record_ct == 0):
-				d_progress[iter_ct] = max_fit
-	return max_fit, max_vec, d_progress
+				writer.writerow([iter_ct, max_fit])
+	return max_fit, max_vec
 
 
-def continuous_SimulatedAnnealing(param_size, fit_func, iterations, restarts, T=1.0, alpha=0.999, verbose=False):
+def continuous_SimulatedAnnealing(param_size, fit_func, iterations, restarts, T=1.0, alpha=0.999, verbose=False, ofilename='./results/sa_progress.csv'):
 	""" Simulated Annealing w. random restart
 		source: http://www.mit.edu/~dbertsim/papers/Optimization/Simulated%20annealing.pdf
 	"""
@@ -65,8 +67,9 @@ def continuous_SimulatedAnnealing(param_size, fit_func, iterations, restarts, T=
 	max_fit = None
 	max_vec = None
 	iter_ct = 0
-	d_progress = {}
 	record_ct = 100
+	writer = csv.writer(open(ofilename,'w'))
+	writer.writerow(['iterations','fitness'])
 	for r in xrange(restarts):
 		if verbose:
 			print "RANDOM START"
@@ -100,11 +103,11 @@ def continuous_SimulatedAnnealing(param_size, fit_func, iterations, restarts, T=
 				T = T*alpha
 			iter_ct += 1
 			if (iter_ct % record_ct == 0):
-				d_progress[iter_ct] = max_fit
-	return max_fit, max_vec, d_progress 
+				writer.writerow([iter_ct, max_fit])
+	return max_fit, max_vec
 
 
-def continuous_GeneticAlgorithm(param_size, fit_func, population_size=100, generations=100, restarts=1, child_per_parent=1, mutation_prob=0.1, crossover_split=0.5, verbose=False):
+def continuous_GeneticAlgorithm(param_size, fit_func, population_size=100, generations=100, restarts=1, child_per_parent=1, mutation_prob=0.1, crossover_split=0.5, verbose=False, ofilename='./results/ga_progress.csv'):
 	""" Genetic Algorithm
 		parameters:
 			- population size
@@ -119,11 +122,12 @@ def continuous_GeneticAlgorithm(param_size, fit_func, population_size=100, gener
 				- genomes are modified via mutation and crossover
 		source: http://en.wikipedia.org/wiki/Genetic_algorithm
 	"""
-	max_fitness = -np.inf 
+	max_fit = -np.inf 
 	max_vec = None
 	iter_ct = 0
-	d_progress = {}
 	record_ct = 100
+	writer = csv.writer(open(ofilename,'w'))
+	writer.writerow(['iterations','fitness'])
 	# random restarts
 	for r in xrange(restarts):
 		if verbose:
@@ -142,16 +146,16 @@ def continuous_GeneticAlgorithm(param_size, fit_func, population_size=100, gener
 			for i in xrange(child_per_parent*population_size):
 				ls_offspring.append(generate_offspring(population, mutation_prob, crossover_split))
 			population = np.vstack((population,np.array(ls_offspring)))
-			if (fitness[idx[0]] >= max_fitness):
-				max_fitness = fitness[idx[0]]
+			if (fitness[idx[0]] >= max_fit):
+				max_fit = fitness[idx[0]]
 				max_vec = population[idx[0],:]
 				if verbose:
 					print "max fit: ", fitness[idx[0]]
 			for i in range(len(fitness)):
 				iter_ct += 1
 				if (iter_ct % record_ct == 0):
-					d_progress[iter_ct] = max_fitness
-	return max_fitness, max_vec, d_progress
+					writer.writerow([iter_ct, max_fit])
+	return max_fit, max_vec
 
 
 def generate_offspring(population, mutation_prob, crossover_split):

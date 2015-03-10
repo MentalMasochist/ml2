@@ -56,44 +56,33 @@ def main():
 		fitness = ct_match*10**int(np.ceil(np.log10(2*len(vec_color)))) - max_color - min_color
 		return fitness
 
-	# # test algorithms
-	# # Randomized Hill CLimbing
-	# print "\nRHC " + "#"*30
-	# max_fit, max_vec, d_progress = ropt.color_RandomizedHillClimb(len(G.nodes()), fit, iterations=100, restarts=10, verbose=True)
-	# print "RHC fitness: ", max_fit
-	# print "selection vector: ", max_vec
-	# print "colors: ", len(np.unique(max_vec)) 
-	# print "d_progress:"
-	# print d_progress
+	# test algorithms
+	# Randomized Hill CLimbing
+	print "\nRHC " + "#"*30
+	ofilename = "./results/rhc_results.csv"
+	max_fit, max_vec = ropt.color_RandomizedHillClimb(len(G.nodes()), fit, iterations=100, restarts=1, verbose=True)
 
 	# # Simulated Annealing
 	# print "\nSA " + "#"*30
-	# max_fit, max_vec, d_progress = ropt.color_SimulatedAnnealing(len(G.nodes()), fit, iterations=1000, restarts=10, verbose=True)
-	# print "SA fitness: ", max_fit
-	# print "selection vector: ", max_vec 
-	# print "colors: ", len(np.unique(max_vec)) 
-	# print "d_progress:"
-	# print d_progress
+	# ofilename = "./results/sa_results.csv"
+	# max_fit, max_vec = ropt.color_SimulatedAnnealing(len(G.nodes()), fit, iterations=1000, restarts=1, verbose=True)
 
 	# # Genetic Algorithms
 	# print "\nGA " + "#"*30
-	# max_fit, max_vec, d_progress = ropt.color_GeneticAlgorithm(len(G.nodes()), fit, population_size=100, generations=10, restarts=1, child_per_parent=1, mutation_prob=0.1, crossover_split=0.5, verbose=True)
-	# print "GA fitness: ", max_fit
-	# print "selection vector: ", max_vec 
-	# print "colors: ", len(np.unique(max_vec)) 
-	# print "d_progress:"
-	# print d_progress
+	# ofilename = "./results/ga_results.csv"
+	# max_fit, max_vec = ropt.color_GeneticAlgorithm(len(G.nodes()), fit, population_size=100, generations=10, restarts=1, child_per_parent=1, mutation_prob=0.1, crossover_split=0.5, verbose=True)
 	
 	# # MIMIC
 	# print "\nMIMIC " + "#"*30
-	# max_fit, max_vec, d_progress = \
+	# ofilename = "./results/mimic_results.csv"
+	# max_fit, max_vec = \
 	# 	ropt.color_MIMIC(len(G.nodes()), fit, iterations=10, restarts=1, init_population_size=100, n_samples=100, theta_percentile=0.8, verbose=True)
-	# print "MIMIC fitness: ", max_fit
-	# print "selection vector: ", max_vec 
-	# print "colors: ", len(np.unique(max_vec)) 
-	# print "d_progress:"
-	# print d_progress
 
+	# write results
+	writer = csv.writer(open(ofilename,'w'))
+	writer.writerow(['fitness',max_fit])
+	writer.writerow(['selection_vector',max_vec])
+	writer.writerow(['colors',len(np.unique(max_vec))])
 
 	return
 

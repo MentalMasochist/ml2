@@ -49,52 +49,30 @@ def main():
 	# test algorithms
 	# Randomized Hill Climbing
 	print "\nRHC " + "#"*30
-	max_fit, max_vec, d_progress = ropt.bitflip_RandomizedHillClimb(len(na_values), fit, iterations=100, restarts=10, verbose=True)
-	print "RHC fitness: ", max_fit
-	print "select vector:"
-	print max_vec
-	print "d_progress:"
-	print d_progress
-	print "weight limit: ", weight_limit
-	print "total weight: ", np.sum(na_weights[max_vec.astype(bool)]) 
-	print "total value: ", np.sum(na_values[max_vec.astype(bool)])
+	ofilename = "./results/rhc_results.csv"
+	max_fit, max_vec = ropt.bitflip_RandomizedHillClimb(len(na_values), fit, iterations=100, restarts=10, verbose=True)
 
 	# # Simulated Annealing
 	# print "\nSA " + "#"*30
-	# max_fit, max_vec, d_progress = ropt.bitflip_SimulatedAnnealing(len(na_values), fit, iterations=100, restarts=10, verbose=True)
-	# print "SA fitness: ", max_fit
-	# print "select vector:"
-	# print max_vec
-	# print "d_progress:"
-	# print d_progress
-	# print "weight limit: ", weight_limit
-	# print "total weight: ", np.sum(na_weights[max_vec.astype(bool)]) 
-	# print "total value: ", np.sum(na_values[max_vec.astype(bool)])
+	# ofilename = "./results/sa_results.csv"
+	# max_fit, max_vec = ropt.bitflip_SimulatedAnnealing(len(na_values), fit, iterations=100, restarts=10, verbose=True)
 
 	# # Genetic Algorithms
 	# print "\nGA " + "#"*30
-	# max_fit, max_vec, d_progress = ropt.bitflip_GeneticAlgorithm(len(na_values), fit, population_size=100, generations=1000, restarts=1, child_per_parent=1, mutation_prob=0.1, crossover_split=0.5, verbose=True)
-	# print "GA fitness: ", max_fit
-	# print "select vector:"
-	# print max_vec
-	# print "d_progress:"
-	# print d_progress
-	# print "weight limit: ", weight_limit
-	# print "total weight: ", np.sum(na_weights[max_vec.astype(bool)]) 
-	# print "total value: ", np.sum(na_values[max_vec.astype(bool)])
+	# ofilename = "./results/ga_results.csv"
+	# max_fit, max_vec = ropt.bitflip_GeneticAlgorithm(len(na_values), fit, population_size=100, generations=1000, restarts=1, child_per_parent=1, mutation_prob=0.1, crossover_split=0.5, verbose=True)
 
 	# # MIMIC
 	# print "\nMIMIC " + "#"*30
-	# max_fit, max_vec, d_progress = ropt.bitflip_MIMIC(len(na_values), fit, iterations=100, restarts=1, init_population_size=100, n_samples=100, theta_percentile=0.8, verbose=True)
-	# print "MIMIC fitness: ", max_fit
-	# print "select vector:"
-	# print max_vec
-	# print "d_progress:"
-	# print d_progress
-	# print "weight limit: ", weight_limit
-	# print "total weight: ", np.sum(na_weights[max_vec.astype(bool)]) 
-	# print "total value: ", np.sum(na_values[max_vec.astype(bool)])
+	# ofilename = "./results/mimic_results.csv"
+	# max_fit, max_vec = ropt.bitflip_MIMIC(len(na_values), fit, iterations=100, restarts=1, init_population_size=100, n_samples=100, theta_percentile=0.8, verbose=True)
 
+	# write results
+	writer = csv.writer(open(ofilename,'w'))
+	writer.writerow(['max_fit',max_fit])
+	writer.writerow(['weight_limit',weight_limit])
+	writer.writerow(['total_weight',np.sum(na_weights[max_vec.astype(bool)])])
+	writer.writerow(['total_value',np.sum(na_values[max_vec.astype(bool)])])
 	return
 
 
